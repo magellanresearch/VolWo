@@ -22,7 +22,21 @@ menu = st.sidebar.radio("Navigation", [
 if menu == "Dashboard":
     st.title("📊 VolWo Dashboard")
     
-    # Show VIX Term Structure plot directly on dashboard
+    # Show VIX Term Structure plot directly on dashboarddef set_background():
+    st.markdown(
+        """
+        <style>
+        .stApp {
+            background-image: url("https://raw.githubusercontent.com/magellanresearch/VolWo/main/backvola.jpg")
+            background-size: cover;
+            background-repeat: no-repeat;
+            background-attachment: fixed;
+            opacity: 0.8;
+        }
+        </style>
+        """,
+        unsafe_allow_html=True
+    )
     plot_vix_term_structure()
 
 elif menu == "VIX/VIX-Future":
