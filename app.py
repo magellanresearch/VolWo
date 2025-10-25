@@ -1,46 +1,50 @@
 import streamlit as st
-import pandas as pd
-import os
-
 from modules.data_loader import fetch_recent_data, fetch_full_history
-from modules.fear_greed_updater import update_fear_greed
+from modules.plotting import plot_vix, plot_etps, plot_strategies
+from modules.analysis import analyze_data
+from modules.database import show_database
+from modules.university import show_university
 
-TICKERS = ['^VIX', 'UVXY', 'VXX', 'SVXY', 'VXY']
-DATA_DIR = "database"
-os.makedirs(DATA_DIR, exist_ok=True)
+# Set page config
+st.set_page_config(page_title="VolWo Dashboard", layout="wide")
 
-# Auto-update on startup
-st.sidebar.success("🔄 Updating recent data...")
-for ticker in TICKERS:
-    try:
-        df = fetch_recent_data(ticker)
-        df.to_csv(f"{DATA_DIR}/{ticker}_recent.csv")
-    except Exception as e:
-        st.sidebar.error(f"❌ Failed to fetch {ticker}: {e}")
+# Sidebar menu
+menu = st.sidebar.radio("Navigation", [
+    "Dashboard",
+    "VIX/VIX-Future",
+    "Volatility-ETPS",
+    "Volatility Strategies",
+    "Data Analyzer",
+    "Database",
+    "University"
+])
 
-update_fear_greed(
-    csv_in=f"{DATA_DIR}/fear-greed.csv",
-    csv_out=f"{DATA_DIR}/all_fng_csv.csv",
-    pckl_out=f"{DATA_DIR}/all_fng.pkl"
-)
+# Routing logic
+if menu == "Dashboard":
+    st.title("📊 VolWo Dashboard")
+    st.write("Welcome to the Volatility World dashboard.")
+    # Add dashboard overview or summary plots here
 
-# Layout
-st.title("📈 Volatility Research Dashboard")
+elif menu == "VIX/VIX-Future":
+    st.title("📈 VIX and VIX Futures")
+    plot_vix()
 
-# Download button
-if st.button("📥 Download Full History"):
-    for ticker in TICKERS:
-        try:
-            df = fetch_full_history(ticker)
-            df.to_csv(f"{DATA_DIR}/{ticker}_full.csv")
-        except Exception as e:
-            st.error(f"❌ Failed to download full history for {ticker}: {e}")
-    st.success("✅ Historische Daten wurden gespeichert.")
+elif menu == "Volatility-ETPS":
+    st.title("📉 Volatility ETPs")
+    plot_etps()
 
-# Fear & Greed Chart
-st.subheader("📊 Fear & Greed Index Over Time")
-try:
-    df_fng = pd.read_pickle(f"{DATA_DIR}/all_fng.pkl")
-    st.line_chart(df_fng.set_index("date")["value"])
-except Exception as e:
-    st.warning(f"⚠️ Could not load chart: {e}")
+elif menu == "Volatility Strategies":
+    st.title("🧠 Volatility Strategies")
+    plot_strategies()
+
+elif menu == "Data Analyzer":
+    st.title("🔍 Data Analyzer")
+    analyze_data()
+
+elif menu == "Database":
+    st.title("🗂️ Database")
+    show_database()
+
+elif menu == "University":
+    st.title("🎓 VolWo University")
+    show_university()
