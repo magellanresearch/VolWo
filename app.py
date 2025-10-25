@@ -3,7 +3,6 @@ from modules.data_loader import fetch_recent_data, fetch_full_history
 from modules.plotting import plot_vix, plot_etps, plot_strategies
 from modules.analysis import analyze_data
 from modules.database import show_database
-from modules.university import show_university
 
 # Set page config
 st.set_page_config(page_title="VolWo Dashboard", layout="wide")
