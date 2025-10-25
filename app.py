@@ -1,6 +1,6 @@
 import streamlit as st
 from modules.data_loader import fetch_recent_data, fetch_full_history
-from modules.plotting import plot_vix, plot_etps, plot_strategies
+from modules.plotting import plot_vix, plot_etps, plot_strategies, plot_vix_term_structure
 from modules.analysis import analyze_data
 from modules.database import show_database
 
@@ -21,8 +21,9 @@ menu = st.sidebar.radio("Navigation", [
 # Routing logic
 if menu == "Dashboard":
     st.title("📊 VolWo Dashboard")
-    st.write("Welcome to the Volatility World dashboard.")
-    # Add dashboard overview or summary plots here
+    
+    # Show VIX Term Structure plot directly on dashboard
+    plot_vix_term_structure()
 
 elif menu == "VIX/VIX-Future":
     st.title("📈 VIX and VIX Futures")
