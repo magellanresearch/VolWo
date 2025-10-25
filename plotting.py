@@ -27,6 +27,7 @@ def plot_strategies():
     ax.set_title("Strategy Signal Strength")
     ax.legend()
     st.pyplot(fig)
+
 def plot_vix_term_structure():
     import streamlit as st
     import matplotlib.pyplot as plt
@@ -36,31 +37,37 @@ def plot_vix_term_structure():
     from urllib.parse import unquote
     import datetime
 
-    headers = {
-        "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:90.0) Gecko/20100101 Firefox/90.0",
-    }
-    url = 'https://www.barchart.com/proxies/core-api/v1/quotes/get?'
-    with requests.Session() as req:
-        req.headers.update(headers)
-        r = req.get(url[:25])
-        req.headers.update({'X-XSRF-TOKEN': unquote(r.cookies.get_dict()['XSRF-TOKEN'])})
-        params = {
-            "list": "futures.contractInRoot",
-            'root': 'VI',
-            "fields": "symbol,symbolName,lastPrice",
-            "orderBy": "expiration",
-            "orderDir": "desc",
-            "between(lastPrice,.10,)": "",
-            "between(tradeTime,2024-01-01,2024-12-30)": "",
-            "page": "1",
-            "limit": "500",
-            "raw": "1"
+    def fetch_vix_data():
+        headers = {
+            "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:90.0) Gecko/20100101 Firefox/90.0",
         }
-        r = req.get(url, params=params).json()
-        df = pd.DataFrame(r['data'])
+        url = 'https://www.barchart.com/proxies/core-api/v1/quotes/get?'
+        with requests.Session() as req:
+            req.headers.update(headers)
+            r = req.get(url[:25])
+            req.headers.update({'X-XSRF-TOKEN': unquote(r.cookies.get_dict()['XSRF-TOKEN'])})
+            params = {
+                "list": "futures.contractInRoot",
+                'root': 'VI',
+                "fields": "symbol,symbolName,lastPrice",
+                "orderBy": "expiration",
+                "orderDir": "desc",
+                "between(lastPrice,.10,)": "",
+                "between(tradeTime,2024-01-01,2024-12-30)": "",
+                "page": "1",
+                "limit": "500",
+                "raw": "1"
+            }
+            r = req.get(url, params=params).json()
+            return pd.DataFrame(r['data'])
 
+    if st.button("🔄 Refresh VIX Term Structure"):
+        st.experimental_rerun()
+
+    df = fetch_vix_data()
     symbols = []
     prices = []
+
     for _, row in df.iterrows():
         symbols.append(row['symbol'])
         prices.append(float(row['lastPrice'].replace("s", "")))
