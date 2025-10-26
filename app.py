@@ -1,5 +1,7 @@
 import streamlit as st
 import pandas as pd
+import numpy as np
+import yfinance as yf
 from plotting import plot_vix_term_structure, plot_vix_with_sma
 
 # Dummy-Daten (ersetzen durch echte Datenquellen)
