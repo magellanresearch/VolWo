@@ -127,5 +127,10 @@ def plot_vix_with_sma():
     ax.set_ylabel("Indexwert")
     ax.legend()
     ax.grid(True)
+col1, col2 = st.columns(2)
+with col1:
+    st.pyplot(fig_vix_term_structure)
+with col2:
+    st.pyplot(fig_vix_sma_overlay)
 
     st.pyplot(fig)
